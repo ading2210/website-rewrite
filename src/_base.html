@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>{{ title }}</title>
+
+    <meta name="description" content="{{ description }}">
+    <meta property="og:title" content="{{ title }}">
+    <meta property="og:url" content="{{ url or 'https://ading.dev'}}">
+    <meta property="og:description" content="{{ description }}">
+    <meta property="og:image" content="{{ image or 'https://ading.dev/assets/icon.png' }}">
+    <meta property="og:type" content="website">
+
+    <link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@latest/new.min.css"> 
+    
+    {% block head %}
+    {% endblock %}
+  </head>
+  <body>
+    <header>
+      <h1>ading2210</h1>
+      <nav>
+        <a href="/">Home</a> /
+        <a href="/projects">Projects</a> /
+        <a href="/blog">Blog</a>
+      </nav>
+    </header>
+    {% block content %}
+    {% endblock %}
+
+    {% block copyright %}
+      <hr>
+      <p>This website is licensed under the <a href="https://www.gnu.org/licenses/agpl-3.0.txt" target="_blank">GNU AGPL v3</a>.</p>
+    {% endblock %}
+    
+    {% if back_button %}
+      <p><a href="{{ back_button }}"><- Back</a></p>
+    {% endif %}
+    </body>
+</html>
