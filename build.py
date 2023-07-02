@@ -8,6 +8,9 @@ from pathlib import Path
 #based on the example build script taken from the staticjinja documentation
 #https://staticjinja.readthedocs.io/en/stable/user/advanced.html
 
+output_path = Path(__file__).resolve().parent / "output"
+shutil.rmtree(output_path)
+
 md = markdown.Markdown(output_format="html5", extensions=["meta"])
 
 def md_context(template):
@@ -37,13 +40,13 @@ def render_md(site, template, **kwargs):
   os.makedirs(out.parent, exist_ok=True)
   site.get_template("blog/_post.html").stream(**kwargs).dump(str(out), encoding="utf-8")
 
-output_path = Path(__file__).resolve().parent / "output"
-shutil.rmtree(output_path)
-
 site = Site.make_site(
   searchpath="src",
   outpath="output",
   contexts=[(r".*\.md", md_context)],
   rules=[(r".*\.md", render_md)],
+  staticpaths=[
+    "blog/assets"
+  ]
 )
 site.render()
