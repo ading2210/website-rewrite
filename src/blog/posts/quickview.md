@@ -1,6 +1,8 @@
 ---
 title: Adventures in Point-Blank: Exploiting QuickOffice on Chrome OS
 date: 5/3/23
+description: This blog post mainly attempts to explain the process in which I, along with Bypassi, created QuickView, an exploit which allows for the creation of webview windows with arbitrary URLs.
+url: https://ading.dev/blog/posts/quickview.html
 ---
 ## Introduction:
 

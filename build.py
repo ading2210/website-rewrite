@@ -11,7 +11,7 @@ from pathlib import Path
 output_path = Path(__file__).resolve().parent / "output"
 shutil.rmtree(output_path)
 
-md = markdown.Markdown(output_format="html5", extensions=["meta"])
+md = markdown.Markdown(output_format="html5", extensions=["meta", "fenced_code"])
 
 def md_context(template):
   markdown_content = Path(template.filename).read_text()
