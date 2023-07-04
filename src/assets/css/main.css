@@ -4,6 +4,9 @@
 }
 /* generic element styling */
 a {
+  color: #bc7ae6;
+}
+a:hover {
   color: #a64ede;
 }
 
@@ -70,6 +73,9 @@ nav {
 #links_container > a {
   color: #afaeb8;
   text-decoration:none;
+}
+#links_container > a:hover {
+  color: #ffffff;
 }
 
 #name_container {

