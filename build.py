@@ -46,7 +46,9 @@ site = Site.make_site(
   contexts=[(r".*\.md", md_context)],
   rules=[(r".*\.md", render_md)],
   staticpaths=[
-    "blog/assets"
+    "assets",
+    "blog/assets",
+    "favicon.ico"
   ]
 )
-site.render()
+site.render(use_reloader=True)
