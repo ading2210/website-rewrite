@@ -23,7 +23,8 @@ pre, code {
   background-color: #241e3a;
   padding: 4px;
   border-radius: 4px;
-  border: 1px solid #3a344e
+  border: 1px solid #3a344e;
+  overflow-x: auto;
 }
 pre {
   padding: 8px;
@@ -73,6 +74,9 @@ nav {
 #links_container > a {
   color: #afaeb8;
   text-decoration:none;
+  
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 #links_container > a:hover {
   color: #ffffff;
