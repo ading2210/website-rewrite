@@ -1,4 +1,4 @@
 #!/bin/bash
 
-rm -r ~/projects/website-deployed
-cp ./output ~/projects/website-deployed -r
+rm -r ~/deployments/website
+cp ./output ~/deployments/website -r
