@@ -9,7 +9,11 @@ from pathlib import Path
 #https://staticjinja.readthedocs.io/en/stable/user/advanced.html
 
 output_path = Path(__file__).resolve().parent / "output"
-shutil.rmtree(output_path)
+try:
+  shutil.rmtree(output_path)
+except FileNotFoundError:
+  pass
+output_path.mkdir(parents=True, exist_ok=True)
 
 md = markdown.Markdown(output_format="html5", extensions=["meta", "fenced_code"])
 
@@ -39,6 +43,10 @@ def render_md(site, template, **kwargs):
   # Compile and stream the result
   os.makedirs(out.parent, exist_ok=True)
   site.get_template("blog/_post.html").stream(**kwargs).dump(str(out), encoding="utf-8")
+
+
+robots_file = Path(__file__).resolve().parent / "robots.txt"
+shutil.copy(robots_file, output_path / "robots.txt")
 
 site = Site.make_site(
   searchpath="src",
