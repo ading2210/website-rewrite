@@ -16,7 +16,7 @@ There's a couple variations, but the main one works by the fact that whenever yo
 
 This isn't the exact method that's used for this exploit, but it demonstrates the general concept well enough, which is that certain opened tabs can retain the permissions of their parent.
 
-A more detailed explanation can be found at [Bypassi's website](https://bolg.glitch.me/_/point-blank/), as he is the one who originally discovered it.
+A more detailed explanation can be found at [Bypassi's website](https://blog.bypassi.com/_/point-blank/), as he is the one who originally discovered it.
 
 ## What Even is QuickOffice?
 
@@ -93,7 +93,7 @@ At this time, I also drew up a logo to make it look a bit more professional.
 
 ## The Final Result:
 
-So, what was this all for? Well, for starters, because QuickOffice is found on every single Chrome OS device, its the first universal point-blank exploit found so far. Thus, it should work on any managed Chromebook which has bookmarklets allowed. I'm sure this has a lot more potential outside of just unblocking a few pages, so feel free to experiment with the exploit yourself.
+So, what was this all for? Well, for starters, because QuickOffice is found on every single Chrome OS device, its the first universal webview exploit found so far. Thus, it should work on any managed Chromebook which has bookmarklets allowed. I'm sure this has a lot more potential outside of just unblocking a few pages, so feel free to experiment with the exploit yourself.
 
 If you want to check out the finalized proof of concept, I've deployed it to [Cloudflare Pages](https://quickview-exploit.pages.dev) for easy access. If you don't have a Chromebook but still want to see the source code, I've published it on [Github](https://github.com/ading2210/quickview) as well.
 
