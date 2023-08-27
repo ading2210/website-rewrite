@@ -54,10 +54,6 @@ def render_md(site, template, **kwargs):
   os.makedirs(out.parent, exist_ok=True)
   site.get_template("blog/_post.html").stream(**kwargs).dump(str(out), encoding="utf-8")
 
-
-robots_file = Path(__file__).resolve().parent / "robots.txt"
-shutil.copy(robots_file, output_path / "robots.txt")
-
 reloader = len(sys.argv) == 2 and sys.argv[1] == "dev"
 site = Site.make_site(
   searchpath="src",
@@ -67,7 +63,8 @@ site = Site.make_site(
   staticpaths=[
     "assets",
     "blog/assets",
-    "favicon.ico"
+    "favicon.ico",
+    "robots.txt"
   ]
 )
 site.render(use_reloader=reloader)
