@@ -18,6 +18,7 @@ ul {
   margin-top: 0px;
 }
 
+/* code blocks */
 pre, code {
   font-family: monospace;
   background-color: #241e3a;
@@ -33,6 +34,12 @@ pre code {
   background-color: transparent;
   border: none;
   padding: 0px;
+}
+code * {
+  font-family: monospace;
+}
+.codehilite {
+  border-radius: 4px;
 }
 
 /* page styling */

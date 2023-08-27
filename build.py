@@ -1,6 +1,7 @@
 import os
 import markdown
 import shutil
+import sys
 
 from staticjinja import Site
 from pathlib import Path
@@ -15,7 +16,16 @@ except FileNotFoundError:
   pass
 output_path.mkdir(parents=True, exist_ok=True)
 
-md = markdown.Markdown(output_format="html5", extensions=["meta", "fenced_code"])
+md = markdown.Markdown(
+  output_format="html5", 
+  extensions=["meta", "fenced_code", "codehilite"],
+  extension_configs={
+    "codehilite": {
+      "noclasses": True,
+      "pygments_style": "material"
+    }
+  }
+)
 
 def md_context(template):
   markdown_content = Path(template.filename).read_text()
@@ -48,6 +58,7 @@ def render_md(site, template, **kwargs):
 robots_file = Path(__file__).resolve().parent / "robots.txt"
 shutil.copy(robots_file, output_path / "robots.txt")
 
+reloader = len(sys.argv) == 2 and sys.argv[1] == "dev"
 site = Site.make_site(
   searchpath="src",
   outpath="output",
@@ -59,4 +70,4 @@ site = Site.make_site(
     "favicon.ico"
   ]
 )
-site.render(use_reloader=True)
+site.render(use_reloader=reloader)

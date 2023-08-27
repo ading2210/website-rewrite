@@ -58,7 +58,7 @@ Due to the sheer number of Chrome APIs exposed, finding something useful to do w
 
 Here is the bare-bones POC that we initially came up with:
 
-```
+```js
 let iframe = document.createElement("iframe");
 iframe.src = "chrome-extension://bpmcpldpdmajfigpchkicefoigmkfalc/views/app.html";
 iframe.style.display = "none";
