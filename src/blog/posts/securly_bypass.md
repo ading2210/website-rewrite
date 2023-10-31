@@ -1,7 +1,7 @@
 ---
 title: Bypassing Securly by Manipulating the URL
 date: 10/26/23
-description: Inside the source code of the Securly chrome extension, there's a oversights which could be abused. This blog post will mainly focus on the ones that involve modifying the URL of the blocked page. 
+description: Inside the source code of the Securly chrome extension, there's a few oversights which could be abused. This blog post will mainly focus on the ones that involve modifying the URL of the blocked page. 
 url: https://ading.dev/blog/posts/securly_bypass.html
 --- 
 
@@ -46,7 +46,7 @@ The script then checks to see if `securly.com` or `iheobagjkfklnlikgihanlhcddjoi
 Due to this oversight, you can just make a subdomain at `securly.com.yourdomain.com`, if you have your own domain. If you don't own a domain, you can register free subdomains at [FreeDNS](http://freedns.afraid.org/). You can also register a domain that ends with `securly.com`, such as, [disablesecurly.com](https://www.disablesecurly.com/). By doing this, when Securly tries to filter your page, the `isBlockingInProgress` function will return `true`, preventing Securly from blocking the page.
 
 ## Unblocking a Page by Imitating Google Translate:
-There's actually an even easier method to unblock websites. If you simply add `#translate.google.com` to the end of a blocked URL, Securly will ignore its filters and let you visit it. But why does this occur?
+There's actually an even easier method to unblock websites, which was found by [`@xcr15_51037`](https://discord.com/users/1148629924899463168). If you simply add `#translate.google.com` to the end of a blocked URL, Securly will ignore its filters and let you visit it. But why does this occur?
 
 Once again, the culprit is in Securly's background JS. In it, there's a function which intercepts every HTTP request that the browser makes, and this is aptly called `onBeforeRequestListener`. Towards the end of the function, right before the extension asks Securly's servers if a site is blocked, there's this snippet of code. As with before, the variable names have been changed for readability.
 ```js
