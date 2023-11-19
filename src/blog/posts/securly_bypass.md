@@ -78,7 +78,7 @@ const o = setInterval(() => {
 }, 2000);
 ```
 
-It looks like they've made the same mistake as before with implementing an overly broad whitelist of their `securly.com` domain. In this case, if the website's [origin](https://developer.mozilla.org/en-US/docs/Web/API/Location/origin), contains `securly.com`, then the interval will be cleared, disabling the proxy detection.
+It looks like they've made the same mistake as before with implementing an overly broad whitelist of their `securly.com` domain. In this case, if the website's [origin](https://developer.mozilla.org/en-US/docs/Web/API/Location/origin) contains `securly.com`, then the interval will be cleared, disabling the proxy detection.
 
 ## Conclusion:
 It's not a surprise that Securly is repeating their [older mistakes](https://sheeptester.github.io/longer-tweets/securly-bypass/), considering their already dodgy code quality and privacy practices. For a company claiming to be all about "student safety," they sure don't seem to care about actually writing secure code. If you're stuck with Securly, you now have a few more ways to get around their filtering thanks to these mistakes.
