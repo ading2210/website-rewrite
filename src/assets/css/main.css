@@ -2,6 +2,9 @@
   font-family: "Fredoka", Sans-serif;
   color: #d4d3da;
 }
+body {
+  word-break: break-word;
+}
 /* generic element styling */
 a {
   color: #bc7ae6;
