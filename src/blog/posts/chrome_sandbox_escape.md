@@ -134,7 +134,7 @@ void PolicyUIHandler::HandleSetLocalTestPolicies(
 
 The only validation that this function performs is that it checks to see if `local_test_provider` exists, otherwise it crashes the entire browser. Under what conditions will `local_test_provider` exist, though? 
 
-Then, I found the code that actually [creates the local test policy provider](https://source.chromium.org/chromium/chromium/src/+/main:components/policy/core/common/local_test_policy_provider.cc;l=23;drc=0fba000db58b7966ef2b2e9202dabba44f13d62a;bpv=1;bpt=0). 
+To answer that, I found the code that actually [creates the local test policy provider](https://source.chromium.org/chromium/chromium/src/+/main:components/policy/core/common/local_test_policy_provider.cc;l=23;drc=0fba000db58b7966ef2b2e9202dabba44f13d62a;bpv=1;bpt=0). 
 
 ```cpp
 std::unique_ptr<LocalTestPolicyProvider>
@@ -170,7 +170,7 @@ bool IsPolicyTestingEnabled(PrefService* pref_service,
 
 This function first checks if `kPolicyTestPageEnabled` is true, which is the the policy that is supposed to enable the policy test page under normal conditions. However, you may notice that when `IsPolicyTestingEnabled()` is called, the first argument, the `pref_service`, is set to null. This causes the check to be ignored entirely.
 
-Now, the only check that remains is for the `channel`. In this context, "channel" means browser's release channel, which is something like stable, beta, dev, or canary. So in this case, only `Channel::CANARY` and `Channel::DEFAULT` is allowed. That must mean that my browser is set to either the `Channel::CANARY` or `Channel::DEFAULT`. 
+Now, the only check that remains is for the `channel`. In this context, "channel" means browser's release channel, which is something like stable, beta, dev, or canary. So in this case, only `Channel::CANARY` and `Channel::DEFAULT` is allowed. That must mean that my browser is set to either `Channel::CANARY` or `Channel::DEFAULT`. 
 
 Then does the browser [know what channel it's in](https://source.chromium.org/chromium/chromium/src/+/main:chrome/common/channel_info_posix.cc;l=29-56;drc=d5cc0de2d29206d08ae4ef0980dfe049cc0344d5;bpv=0;bpt=0)? Here's the function where it determines that:
 
@@ -368,7 +368,7 @@ chrome.tabs.update(chrome.devtools.inspectedWindow.tabId, {url: "chrome://policy
 And that's the final piece of the exploit chain working. This race condition relies on the fact that the inspected page and the devtools page are different processes. When the navigation to the WebUI occurs in the inspected page, there is a small window of time before the devtools page realizes and disables the API. If `inspectedWindow.reload()` is called within this interval of time, the reload request will end up on the WebUI page.
 
 ## Putting it All Together
-Now that I had all of the steps of the exploit working, I began putting together the proof of concept code. To recap, this POC has to to the following:
+Now that I had all of the steps of the exploit working, I began putting together the proof of concept code. To recap, this POC has to do the following:
 
 1. Use the race condition in `chrome.devtools.inspectedWindow.reload()` to execute a JS payload on `chrome://policy`
 2. That payload calls `sendWithPromise("setLocalTestPolicies", policy)` to set custom user policies.
@@ -573,7 +573,7 @@ void DevToolsSession::ClearPendingMessages(bool did_crash) {
 }
 ```
 
-You may notice that it seems to contain an exception for the `Page.reload` requests so that they are not cleared. Internally, the `inspectedWindow.reload()` API sends a `Page.reload` request, so as a result the `inspectedWindow.reload()` API calls are exempted from this patch. Google really patched this bug, then added an exception to it which make the bug possible again. I guess they didn't realize that `Page.reload` could also run scripts.
+You may notice that it seems to contain an exception for the `Page.reload` requests so that they are not cleared. Internally, the `inspectedWindow.reload()` API sends a `Page.reload` request, so as a result the `inspectedWindow.reload()` API calls are exempted from this patch. Google really patched this bug, then added an exception to it which made the bug possible again. I guess they didn't realize that `Page.reload` could also run scripts.
 
 Another mystery is why the page crashes when the `debugger` statement is run twice. I'm still not completely sure about this one, but I think I narrowed it down to a function within Chromium's renderer code. It's specifically happens when Chromium [checks the navigation state](https://source.chromium.org/chromium/chromium/src/+/main:content/renderer/render_frame_impl.cc;l=1345-1346;drc=770f3fce3719ee18c102ad0b1a347d82147fbb1a), and when it encounters an unexpected state, it crashes. This state gets messed up when [RenderFrameImpl::SynchronouslyCommitAboutBlankForBug778318](https://source.chromium.org/chromium/chromium/src/+/main:content/renderer/render_frame_impl.cc;l=5622;drc=770f3fce3719ee18c102ad0b1a347d82147fbb1a?q=navigation_commit_state_&ss=chromium%2Fchromium%2Fsrc) is called (yet another side effect of treating `about:blank` specially). Of course, any kind of crash works, such as with `[...new Array(2**31)]`, which causes the tab to run out of memory. However, the `debugger` crash is much faster to trigger so that's what I used in my final POC.
 
@@ -589,13 +589,14 @@ By the way, you might have noticed the "extension install error" screen that is 
 ## Google's Response
 
 After I reported the vulnerability, Google quickly confirmed it and classified it as P1/S1, which means high priority and high severity. Over the next few weeks, the following fixes were implemented:
+
 - [Adding a `loaderId` argument to the `Page.reload` command](https://chromium-review.googlesource.com/c/chromium/src/+/5542082) and [checking the `loaderID` on the renderer side](https://chromium-review.googlesource.com/c/chromium/src/+/5625857)  - This ensures that the command is only valid for a single origin and won't work if the command reaches a privileged page unintentionally.
 - [Checking for the URL in the `inspectedWindow.reload()` function](https://chromium-review.googlesource.com/c/devtools/devtools-frontend/+/5546062) - Now, this function isn't dependent on only the extension API revoking access.
 - [Checking if the test policies are enabled in the WebUI handler](https://chromium-review.googlesource.com/c/chromium/src/+/5679162) - By adding a working check in the handler function, this prevents the test policies from being set entirely.
 
 Eventually, the vulnerability involving the race condition was assigned [CVE-2024-5836](https://nvd.nist.gov/vuln/detail/CVE-2024-5836), with a CVSS severity score of 8.8 (High). The vulnerability involving crashing the inspected page was assigned [CVE-2024-6778](https://nvd.nist.gov/vuln/detail/CVE-2024-6778), also with a severity score of 8.8.
 
-Once everything was fixed and merged into the various release branches, the VRP panel reviewed the bug report and determined the reward. **I received with $20,000 for finding this vulnerability!**
+Once everything was fixed and merged into the various release branches, the VRP panel reviewed the bug report and determined the reward. **I received $20,000 for finding this vulnerability!**
 
 ![A screenshot of the message which announced the reward amount](/blog/assets/chrome_sandbox_escape/reward_annoucement.png)
 
@@ -614,8 +615,8 @@ Once everything was fixed and merged into the various release branches, the VRP 
 - October 15 - The entire bug report became public
 
 ## Conclusion
-I guess the main takeaway from all of this is that if you look in the right places, the simplest mistakes can be compound upon each other to result in a vulnerability with surprisingly high severity. You also can't trust that very old code will remain safe after many years, considering that the `inspectedWindow.reload` bug actually works as far back as Chrome v45. Additionally, it isn't a good idea to ship completely undocumented, incomplete, and insecure features to everyone, as was the case with the policy test page bug. Finally, when fixing a vulnerability, you should check to see if similar bugs are possible and try to fix those as well.
+I guess the main takeaway from all of this is that if you look in the right places, the simplest mistakes can be compounded upon each other to result in a vulnerability with surprisingly high severity. You also can't trust that very old code will remain safe after many years, considering that the `inspectedWindow.reload` bug actually works as far back as Chrome v45. Additionally, it isn't a good idea to ship completely undocumented, incomplete, and insecure features to everyone, as was the case with the policy test page bug. Finally, when fixing a vulnerability, you should check to see if similar bugs are possible and try to fix those as well.
 
-You may find the original bug report here: [crbug.com/40053357](https://issues.chromium.org/issues/40053357)
+You may find the original bug report here: [crbug.com/338248595](https://issues.chromium.org/issues/338248595)
 
 I've also put the POCs for each part of the vulnerability in [a Github repo](https://github.com/ading2210/CVE-2024-6778-POC).
