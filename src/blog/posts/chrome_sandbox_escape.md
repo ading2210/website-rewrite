@@ -22,7 +22,7 @@ Running untrusted Javascript on `chrome://` pages is a common attack vector, so 
 Of course, sometimes with these checks there's an edge case that the Chromium developers didn't account for.
 
 ## About Enterprise Policies
-My journey towards finding this vulnerability began when I was looking into the Chromium [enterprise policy system](https://chromium.googlesource.com/chromium/src/+/HEAD/docs/enterprise/policies.md). It's intended to be a way for administrators to force certain settings to be applied to devices owned by a company or school. Usually, policies tied to a Google account and are downloaded from Google's own management server. 
+My journey towards finding this vulnerability began when I was looking into the Chromium [enterprise policy system](https://chromium.googlesource.com/chromium/src/+/HEAD/docs/enterprise/policies.md). It's intended to be a way for administrators to force certain settings to be applied to devices owned by a company or school. Usually, policies are tied to a Google account and are downloaded from Google's own management server. 
 
 ![The "Your browser is managed by your organization" message.](/blog/assets/chrome_sandbox_escape/browser_management_msg.png)
 
